@@ -55,8 +55,8 @@
             color: #ecf0f1;
         }
         input {
-            width: 60px; /* Smaller width */
-            padding: 6px; /* Smaller padding */
+            width: 80px; /* Smaller width */
+            padding: 8px;
             border-radius: 8px;
             border: 1px solid #16a085;
             text-align: center;
@@ -192,7 +192,7 @@
                         setGameOver(true);
                         setCashout(0);
                     } else {
-                        setCashout(prev => prev * (1 + mineCount / 25));
+                        setCashout(prev => prev * (1 + mineCount / 25) * 1.25);
                     }
                 }, 200);
             };
@@ -251,7 +251,6 @@
                     </div>
                     {gameStarted && !gameOver && (
                         <div className="cashout-container">
-                            <span>Cash Out Amount: ${(bet * cashout).toFixed(2)}</span>
                             <button className="green-button" onClick={handleCashout}>Cashout</button>
                         </div>
                     )}
