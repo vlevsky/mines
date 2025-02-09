@@ -1,264 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mines</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        body {
-            font-family: "Arial", sans-serif;
-            text-align: center;
-            background-color: #2c3e50; /* Deep Blue Background */
-            color: #ecf0f1; /* Light gray text */
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-        h1 {
-            font-size: 2.6rem;
-            color: #16a085; /* Soft teal color */
-            margin-bottom: 15px;
-        }
-        .game-container {
-            max-width: 500px;
-            width: 100%;
-            background: #34495e; /* Darker Blue/Gray */
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            box-sizing: border-box;
-        }
-        .balance {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2ecc71; /* Light green */
-        }
-        .inputs {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        label {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ecf0f1;
-        }
-        input {
-            width: 80px; /* Smaller width */
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid #16a085;
-            text-align: center;
-            font-size: 1rem;
-            background: #1abc9c; /* Soft green background for inputs */
-            color: white;
-        }
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 5px #16a085; /* Green focus */
-        }
-        button {
-            background: linear-gradient(45deg, #3498db, #2980b9); /* Blue gradient for buttons */
-            color: white;
-            font-size: 1.2rem;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            width: 50%;
-        }
-        button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(45deg, #2980b9, #3498db);
-        }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(5, 60px); /* 5x5 grid */
-            gap: 8px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-        .cell {
-            width: 60px;
-            height: 60px;
-            background-color: #7f8c8d; /* Gray cell background */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.1s ease-in-out;
-        }
-        .safe {
-            background-color: #2ecc71; /* Green for safe cells */
-        }
-        .mine {
-            background-color: #e74c3c; /* Red for mine cells */
-            animation: jiggle 0.15s infinite;
-        }
-        .mine span {
-            font-size: 2rem;
-        }
-        @keyframes jiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .cashout-container {
-            margin-top: 15px;
-        }
-        .game-over {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #e74c3c;
-            margin-top: 20px;
-        }
-
-        /* Responsive for smaller screens */
-        @media (max-width: 768px) {
-            .game-container {
-                padding: 20px;
-                width: 90%;
-            }
-            h1 {
-                font-size: 2.5rem;
-            }
-            .board {
-                grid-template-columns: repeat(4, 60px); /* 4x4 grid for smaller screens */
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mines Game</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #1a1a2e;
+      color: #ecf0f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 2.8rem;
+      color: #00adb5;
+      text-shadow: 0 0 10px #00adb5;
+      margin-bottom: 15px;
+    }
+    .game-container {
+      background: #16213e;
+      max-width: 500px;
+      width: 100%;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 173, 181, 0.6);
+      box-sizing: border-box;
+    }
+    .balance {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #4fffb0;
+    }
+    .cashout-amount {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffd700;
+      margin-top: 10px;
+      text-shadow: 0 0 8px #ffd700;
+    }
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .inputs label {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ecf0f1;
+    }
+    .inputs input {
+      width: 80px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid #00adb5;
+      text-align: center;
+      font-size: 1rem;
+      background: #222831;
+      color: white;
+    }
+    .start-button,
+    .cashout-button {
+      background: #00adb5;
+      color: white;
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 60%;
+      text-shadow: 0 0 5px #ffffff;
+      box-shadow: 0 0 10px #00adb5;
+      margin-top: 10px;
+    }
+    .start-button:hover,
+    .cashout-button:hover {
+      transform: scale(1.05);
+      background: #0097a7;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 25px;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background-color: #393e46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s ease-in-out;
+      box-shadow: 0 0 5px #00adb5;
+    }
+    .cell.safe {
+      background-color: #4fffb0;
+      color: black;
+    }
+    .cell.mine {
+      background-color: #e74c3c;
+      animation: jiggle 0.15s infinite;
+    }
+    @keyframes jiggle {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+      75% { transform: rotate(-5deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .game-over {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #e74c3c;
+      margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+      .game-container {
+        width: 90%;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+      .board {
+        grid-template-columns: repeat(4, 60px);
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Mines</h1>
-    <div class="game-container">
-        <div id="root"></div>
-    </div>
+  <h1>Mines</h1>
+  <div class="game-container">
+    <div id="root"></div>
+  </div>
+  <script type="text/babel">
+    const { useState } = React;
 
-    <script type="text/babel">
-        const { useState } = React;
+    // Generate board with safe cells and random mines
+    const generateBoard = (size, mines) => {
+      const board = Array(size * size).fill('safe');
+      const mineIndices = new Set();
+      while (mineIndices.size < mines) {
+        mineIndices.add(Math.floor(Math.random() * size * size));
+      }
+      mineIndices.forEach(i => board[i] = 'mine');
+      return board;
+    };
 
-        const generateBoard = (size, mines) => {
-            let board = Array(size * size).fill("safe");
-            let mineIndices = new Set();
-            while (mineIndices.size < mines) {
-                mineIndices.add(Math.floor(Math.random() * size * size));
-            }
-            mineIndices.forEach(i => (board[i] = "mine"));
-            return board;
-        };
+    function MinesGame() {
+      const size = 5;
+      const [mineCount, setMineCount] = useState(5);
+      const [bet, setBet] = useState(10);
+      const [balance, setBalance] = useState(1000);
+      const [board, setBoard] = useState(generateBoard(size, mineCount));
+      const [revealed, setRevealed] = useState(Array(size * size).fill(false));
+      const [gameOver, setGameOver] = useState(false);
+      const [cashout, setCashout] = useState(1);
+      const [gameStarted, setGameStarted] = useState(false);
+      const [clickCount, setClickCount] = useState(0);
 
-        function MinesGame() {
-            const size = 5;
-            const [mineCount, setMineCount] = useState(5);
-            const [bet, setBet] = useState(10);
-            const [balance, setBalance] = useState(1000);
-            const [board, setBoard] = useState(generateBoard(size, mineCount));
-            const [revealed, setRevealed] = useState(Array(size * size).fill(false));
-            const [gameOver, setGameOver] = useState(false);
-            const [cashout, setCashout] = useState(1);
-            const [gameStarted, setGameStarted] = useState(false);
-            const [clickCount, setClickCount] = useState(0);
-
-            const handleClick = (index) => {
-                if (!gameStarted || gameOver || revealed[index]) return;
-                setClickCount(prev => prev + 1);
-
-                setTimeout(() => {
-                    const newRevealed = [...revealed];
-                    newRevealed[index] = true;
-                    setRevealed(newRevealed);
-                    if (board[index] === "mine") {
-                        setGameOver(true);
-                        setCashout(0);
-                    } else {
-                        setCashout(prev => prev * (1 + mineCount / 25) * 1.1);
-                    }
-                }, 200);
-            };
-
-            const handleCashout = () => {
-                if (!gameStarted || clickCount === 0) return;
-                setBalance(prev => prev + bet * cashout);
-                alert(`You cashed out with $${(bet * cashout).toFixed(2)}!`);
-                resetGame();
-            };
-
-            const handleStart = () => {
-                if (bet > balance || bet <= 0) {
-                    alert("Invalid bet amount");
-                    return;
-                }
-                setBalance(prev => prev - bet);
-                setGameStarted(true);
-                resetGame();
-            };
-
-            const resetGame = () => {
-                setBoard(generateBoard(size, mineCount));
-                setRevealed(Array(size * size).fill(false));
-                setGameOver(false);
-                setCashout(1);
-                setClickCount(0);
-            };
-
-            return (
-                <div className="game">
-                    <div className="balance">Balance: ${balance.toFixed(2)}</div>
-                    <div className="inputs">
-                        <div>
-                            <label>Bet Amount</label>
-                            <input type="number" value={bet} onChange={(e) => setBet(Number(e.target.value))} placeholder="Bet" />
-                        </div>
-                        <div>
-                            <label>Mines Count</label>
-                            <input type="number" value={mineCount} onChange={(e) => setMineCount(Number(e.target.value))} placeholder="Mines" />
-                        </div>
-                        <button className="start-button" onClick={handleStart}>Start Game</button>
-                    </div>
-                    {gameOver && <div className="game-over">Game Over! You hit a mine!</div>}
-                    <div className="board">
-                        {board.map((cell, index) => (
-                            <div
-                                key={index}
-                                className={`cell ${revealed[index] ? (cell === "mine" ? "mine" : "safe") : ""}`}
-                                onClick={() => handleClick(index)}
-                            >
-                                {revealed[index] && cell === "mine" ? <span>💣</span> : ""}
-                                {revealed[index] && cell !== "mine" ? "+" : ""}
-                            </div>
-                        ))}
-                    </div>
-                    {gameStarted && !gameOver && (
-                        <div className="cashout-container">
-                            <button className="green-button" onClick={handleCashout}>Cashout</button>
-                        </div>
-                    )}
-                </div>
-            );
+      const handleClick = (index) => {
+        if (!gameStarted || gameOver || revealed[index]) return;
+        setClickCount(prev => prev + 1);
+        const newRevealed = [...revealed];
+        newRevealed[index] = true;
+        setRevealed(newRevealed);
+        if (board[index] === 'mine') {
+          setGameOver(true);
+          setCashout(0);
+        } else {
+          setCashout(prev => prev * (1 + mineCount / 25) * 1.1);
         }
+      };
 
-        ReactDOM.render(<MinesGame />, document.getElementById('root'));
-    </script>
+      const handleCashout = () => {
+        if (!gameStarted || clickCount === 0) return;
+        const winnings = bet * cashout;
+        setBalance(prev => prev + winnings);
+        alert(`You cashed out with $${winnings.toFixed(2)}!`);
+        resetGame();
+      };
+
+      const handleStart = () => {
+        if (bet > balance || bet <= 0) {
+          alert("Invalid bet amount");
+          return;
+        }
+        setBalance(prev => prev - bet);
+        setGameStarted(true);
+        resetGame();
+      };
+
+      const resetGame = () => {
+        setBoard(generateBoard(size, mineCount));
+        setRevealed(Array(size * size).fill(false));
+        setGameOver(false);
+        setCashout(1);
+        setClickCount(0);
+      };
+
+      return (
+        <div className="game">
+          <div className="balance">Balance: ${balance.toFixed(2)}</div>
+          <div className="inputs">
+            <div>
+              <label>Bet Amount</label>
+              <input
+                type="number"
+                value={bet}
+                onChange={(e) => setBet(Number(e.target.value))}
+                placeholder="Bet"
+              />
+            </div>
+            <div>
+              <label>Mines Count</label>
+              <input
+                type="number"
+                value={mineCount}
+                onChange={(e) => setMineCount(Number(e.target.value))}
+                placeholder="Mines"
+              />
+            </div>
+            <button className="start-button" onClick={handleStart}>
+              Start Game
+            </button>
+          </div>
+          <div className="cashout-amount">
+            Potential Cashout: ${(bet * cashout).toFixed(2)}
+          </div>
+          {gameOver && (
+            <div className="game-over">Game Over! You hit a mine!</div>
+          )}
+          <div className="board">
+            {board.map((cell, index) => (
+              <div
+                key={index}
+                className={`cell ${
+                  revealed[index]
+                    ? cell === 'mine'
+                      ? 'mine'
+                      : 'safe'
+                    : ''
+                }`}
+                onClick={() => handleClick(index)}
+              >
+                {revealed[index] &&
+                  (cell === 'mine' ? <span>💣</span> : '+')}
+              </div>
+            ))}
+          </div>
+          {gameStarted && !gameOver && (
+            <div className="cashout-container">
+              <button className="cashout-button" onClick={handleCashout}>
+                Cashout
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<MinesGame />, document.getElementById("root"));
+  </script>
 </body>
 </html>
