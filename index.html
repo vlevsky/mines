@@ -94,8 +94,16 @@
         background: #222831;
         color: white;
       }
-      .start-button,
-      .cashout-button {
+      /* Button Container */
+      .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      /* Start Button */
+      .start-button {
         background: #00adb5;
         color: white;
         font-size: 1.2rem;
@@ -104,15 +112,32 @@
         border-radius: 8px;
         cursor: pointer;
         transition: 0.3s;
-        width: 60%;
         text-shadow: 0 0 5px #ffffff;
         box-shadow: 0 0 10px #00adb5;
-        margin-top: 10px;
       }
-      .start-button:hover,
-      .cashout-button:hover {
+      .start-button:hover {
         transform: scale(1.05);
         background: #0097a7;
+      }
+      .start-button:disabled {
+        background: gray;
+        cursor: not-allowed;
+      }
+      /* Cashout Button */
+      .cashout-button {
+        background: #90ee90;
+        color: #222831;
+        font-size: 1.2rem;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 0 10px #90ee90;
+      }
+      .cashout-button:hover {
+        transform: scale(1.05);
+        background: #76d376;
       }
       /* Board and Cells */
       .board {
@@ -204,12 +229,13 @@
         const [cashout, setCashout] = useState(1);
         const [gameStarted, setGameStarted] = useState(false);
         const [clickCount, setClickCount] = useState(0);
+        const [inProgress, setInProgress] = useState(false);
 
         // When a safe cell is clicked, update the cashout multiplier fairly:
         // multiplier factor = (cells remaining) / (safe cells remaining)
         // This is fair because the chance to be safe is (safe cells remaining)/(cells remaining)
         const handleClick = (index) => {
-          if (!gameStarted || gameOver || revealed[index]) return;
+          if (!inProgress || gameOver || revealed[index]) return;
           const newRevealed = [...revealed];
           newRevealed[index] = true;
           setRevealed(newRevealed);
@@ -217,8 +243,8 @@
           if (board[index] === "mine") {
             setGameOver(true);
             setCashout(0);
+            setInProgress(false);
           } else {
-            // Use the current safe count (before this click) for a fair multiplier update:
             setClickCount((prevCount) => {
               const safeCount = prevCount; // safe picks so far
               // Calculate factor: remaining cells / remaining safe cells
@@ -232,10 +258,11 @@
         };
 
         const handleCashout = () => {
-          if (!gameStarted || clickCount === 0) return;
+          if (!inProgress || clickCount === 0) return;
           const winnings = bet * cashout;
           setBalance((prev) => prev + winnings);
           alert(`You cashed out with $${winnings.toFixed(2)}!`);
+          setInProgress(false);
           resetGame();
         };
 
@@ -247,6 +274,7 @@
           // Deduct bet and start a new game.
           setBalance((prev) => prev - bet);
           setGameStarted(true);
+          setInProgress(true);
           resetGame();
         };
 
@@ -294,9 +322,20 @@
                   placeholder="Mines"
                 />
               </div>
-              <button className="start-button" onClick={handleStart}>
+            </div>
+            <div className="button-container">
+              <button
+                className="start-button"
+                onClick={handleStart}
+                disabled={inProgress}
+              >
                 Start Game
               </button>
+              {inProgress && (
+                <button className="cashout-button" onClick={handleCashout}>
+                  Cashout
+                </button>
+              )}
             </div>
             <div className="cashout-amount">
               Potential Cashout: ${(bet * cashout).toFixed(2)}
@@ -322,13 +361,6 @@
                 </div>
               ))}
             </div>
-            {gameStarted && !gameOver && (
-              <div className="cashout-container">
-                <button className="cashout-button" onClick={handleCashout}>
-                  Cashout
-                </button>
-              </div>
-            )}
           </div>
         );
       }
