@@ -172,6 +172,9 @@
       .cell.mine.fade-in {
         animation: fadeIn 0.3s ease-in-out;
       }
+      .cell.safe.fade-in {
+        animation: fadeInSafe 0.3s ease-in-out;
+      }
       @keyframes jiggle {
         0% { transform: rotate(0deg); }
         25% { transform: rotate(-5deg); }
@@ -181,6 +184,10 @@
       }
       @keyframes fadeIn {
         0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      @keyframes fadeInSafe {
+        0% { opacity: 0.5; }
         100% { opacity: 1; }
       }
       .game-over {
@@ -354,7 +361,7 @@
                     revealed[index]
                       ? cell === "mine"
                         ? "mine fade-in"
-                        : "safe"
+                        : "safe fade-in"
                       : ""
                   }`}
                   onClick={() => handleClick(index)}
@@ -363,7 +370,20 @@
                     (cell === "mine" ? (
                       <span>💣</span>
                     ) : (
-                      <span>{(bet * cashout).toFixed(2)}</span>
+                      <span
+                        style={{
+                          fontSize:
+                            (bet * cashout).toFixed(2).length > 5
+                              ? "1rem"
+                              : "1.8rem",
+                        transition: "font-size 0.2s ease-in-out",
+                        wordBreak: "break-word",
+                        textAlign: "center",
+                        lineHeight: "1.2",
+                      }}
+                      >
+                        ${(bet * cashout).toFixed(2)}
+                      </span>
                     ))}
                 </div>
               ))}
