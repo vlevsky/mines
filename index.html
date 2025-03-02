@@ -169,12 +169,19 @@
         background-color: #e74c3c;
         animation: jiggle 0.15s infinite;
       }
+      .cell.mine.fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+      }
       @keyframes jiggle {
         0% { transform: rotate(0deg); }
         25% { transform: rotate(-5deg); }
         50% { transform: rotate(5deg); }
         75% { transform: rotate(-5deg); }
         100% { transform: rotate(0deg); }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
       }
       .game-over {
         font-size: 1.5rem;
@@ -225,15 +232,11 @@
         const [board, setBoard] = useState(generateBoard(size, mineCount));
         const [revealed, setRevealed] = useState(Array(totalCells).fill(false));
         const [gameOver, setGameOver] = useState(false);
-        // cashout multiplier starts at 1 (i.e. 1x your bet)
         const [cashout, setCashout] = useState(1);
         const [gameStarted, setGameStarted] = useState(false);
         const [clickCount, setClickCount] = useState(0);
         const [inProgress, setInProgress] = useState(false);
 
-        // When a safe cell is clicked, update the cashout multiplier fairly:
-        // multiplier factor = (cells remaining) / (safe cells remaining)
-        // This is fair because the chance to be safe is (safe cells remaining)/(cells remaining)
         const handleClick = (index) => {
           if (!inProgress || gameOver || revealed[index]) return;
           const newRevealed = [...revealed];
@@ -350,14 +353,18 @@
                   className={`cell ${
                     revealed[index]
                       ? cell === "mine"
-                        ? "mine"
+                        ? "mine fade-in"
                         : "safe"
                       : ""
                   }`}
                   onClick={() => handleClick(index)}
                 >
                   {revealed[index] &&
-                    (cell === "mine" ? <span>💣</span> : "+")}
+                    (cell === "mine" ? (
+                      <span>💣</span>
+                    ) : (
+                      <span>{(bet * cashout).toFixed(2)}</span>
+                    ))}
                 </div>
               ))}
             </div>
