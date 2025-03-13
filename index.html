@@ -8,208 +8,304 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      /* Global Styles */
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #1a1a2e;
-        color: #ecf0f1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        margin: 0;
-        padding: 20px;
-        height: 100vh;
-      }
-      h1 {
-        font-size: 2.8rem;
-        color: #00adb5;
-        text-shadow: 0 0 10px #00adb5;
-        margin-bottom: 15px;
-      }
-      .game-container {
-        background: #16213e;
-        max-width: 500px;
-        width: 100%;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 0 20px rgba(0, 173, 181, 0.6);
-        box-sizing: border-box;
-      }
-      /* Balance and Top Up */
-      .balance {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #4fffb0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-      }
-      .topup-button {
-        background: #ffd700;
-        color: #222831;
-        font-size: 0.9rem;
-        padding: 6px 12px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-        box-shadow: 0 0 10px #ffd700;
-      }
-      .topup-button:hover {
-        transform: scale(1.05);
-        background: #ffc107;
-      }
-      /* Cashout Amount */
-      .cashout-amount {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #ffd700;
-        margin-top: 10px;
-        text-shadow: 0 0 8px #ffd700;
-        text-align: center;
-      }
-      /* Inputs */
-      .inputs {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 20px;
-      }
-      .inputs label {
-        font-size: 1rem;
-        font-weight: bold;
-        color: #ecf0f1;
-      }
-      .inputs input {
-        width: 80px;
-        padding: 8px;
-        border-radius: 8px;
-        border: 2px solid #00adb5;
-        text-align: center;
-        font-size: 1rem;
-        background: #222831;
-        color: white;
-      }
-      /* Button Container */
-      .button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-top: 10px;
-      }
-      /* Start Button */
-      .start-button {
-        background: #00adb5;
-        color: white;
-        font-size: 1.2rem;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-        text-shadow: 0 0 5px #ffffff;
-        box-shadow: 0 0 10px #00adb5;
-      }
-      .start-button:hover {
-        transform: scale(1.05);
-        background: #0097a7;
-      }
-      .start-button:disabled {
-        background: gray;
-        cursor: not-allowed;
-      }
-      /* Cashout Button */
-      .cashout-button {
-        background: #90ee90;
-        color: #222831;
-        font-size: 1.2rem;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-        box-shadow: 0 0 10px #90ee90;
-      }
-      .cashout-button:hover {
-        transform: scale(1.05);
-        background: #76d376;
-      }
-      /* Board and Cells */
-      .board {
-        display: grid;
-        grid-template-columns: repeat(5, 60px);
-        gap: 10px;
-        justify-content: center;
-        margin-top: 25px;
-      }
-      .cell {
-        width: 60px;
-        height: 60px;
-        background-color: #393e46;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        font-weight: bold;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: transform 0.1s ease-in-out;
-        box-shadow: 0 0 5px #00adb5;
-      }
-      .cell.safe {
-        background-color: #4fffb0;
-        color: black;
-      }
-      .cell.mine {
-        background-color: #e74c3c;
-        animation: jiggle 0.15s infinite;
-      }
-      .cell.mine.fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      .cell.safe.fade-in {
-        animation: fadeInSafe 0.3s ease-in-out;
-      }
-      @keyframes jiggle {
-        0% { transform: rotate(0deg); }
-        25% { transform: rotate(-5deg); }
-        50% { transform: rotate(5deg); }
-        75% { transform: rotate(-5deg); }
-        100% { transform: rotate(0deg); }
-      }
-      @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-      }
-      @keyframes fadeInSafe {
-        0% { opacity: 0.5; }
-        100% { opacity: 1; }
-      }
-      .game-over {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #e74c3c;
-        margin-top: 20px;
-        text-align: center;
-      }
-      @media (max-width: 768px) {
-        .game-container {
-          width: 90%;
-          padding: 20px;
-        }
-        h1 {
-          font-size: 2.5rem;
-        }
-        .board {
-          grid-template-columns: repeat(4, 60px);
-        }
-      }
-    </style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1a1a2e;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh; /* Use min-height instead of height */
+  overflow: auto; /* Allow scrolling */
+}
+
+h1 {
+  font-size: 3rem;
+  color: #00adb5;
+  text-shadow: 0 0 15px #00adb5, 0 0 30px #00adb5;
+  margin-bottom: 20px;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px #00adb5, 0 0 20px #00adb5;
+  }
+  100% {
+    text-shadow: 0 0 20px #00adb5, 0 0 40px #00adb5;
+  }
+}
+
+.game-container {
+  background: linear-gradient(145deg, #16213e, #1a1a2e);
+  max-width: 500px;
+  width: 100%;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(0, 173, 181, 0.8);
+  box-sizing: border-box;
+  border: 2px solid #00adb5;
+  animation: container-glow 3s infinite alternate;
+  margin-bottom: 20px; /* Add margin to allow scrolling */
+}
+
+@keyframes container-glow {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 173, 181, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(0, 173, 181, 0.8);
+  }
+}
+
+/* Balance and Top Up */
+.balance {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #4fffb0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 0 10px #4fffb0;
+}
+
+.topup-button {
+  background: linear-gradient(145deg, #ffd700, #ffc107);
+  color: #222831;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 15px #ffd700;
+}
+
+.topup-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #ffd700;
+}
+
+/* Cashout Amount */
+.cashout-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin-top: 15px;
+  text-shadow: 0 0 10px #ffd700;
+  text-align: center;
+  animation: cashout-glow 2s infinite alternate;
+}
+
+@keyframes cashout-glow {
+  0% {
+    text-shadow: 0 0 5px #ffd700;
+  }
+  100% {
+    text-shadow: 0 0 15px #ffd700;
+  }
+}
+
+/* Inputs */
+.inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.inputs label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #ecf0f1;
+  text-shadow: 0 0 5px #00adb5;
+}
+
+.inputs input {
+  width: 100px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #00adb5;
+  text-align: center;
+  font-size: 1rem;
+  background: #222831;
+  color: white;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.inputs input:focus {
+  border-color: #4fffb0;
+  box-shadow: 0 0 15px #4fffb0;
+  outline: none;
+}
+
+/* Button Container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Start Button */
+.start-button {
+  background: linear-gradient(145deg, #00adb5, #0097a7);
+  color: white;
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-shadow: 0 0 5px #ffffff;
+  box-shadow: 0 0 15px #00adb5;
+}
+
+.start-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #00adb5;
+}
+
+.start-button:disabled {
+  background: gray;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Cashout Button */
+.cashout-button {
+  background: linear-gradient(145deg, #90ee90, #76d376);
+  color: #222831;
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 15px #90ee90;
+}
+
+.cashout-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #90ee90;
+}
+
+/* Board and Cells */
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  background-color: #393e46;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 0 10px #00adb5;
+}
+
+.cell:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00adb5;
+}
+
+.cell.safe {
+  background-color: #4fffb0;
+  color: black;
+  box-shadow: 0 0 15px #4fffb0;
+}
+
+.cell.mine {
+  background-color: #e74c3c;
+  animation: jiggle 0.15s infinite, mine-glow 1s infinite alternate;
+}
+
+@keyframes mine-glow {
+  0% {
+    box-shadow: 0 0 10px #e74c3c;
+  }
+  100% {
+    box-shadow: 0 0 20px #e74c3c;
+  }
+}
+
+.cell.mine.fade-in {
+  animation: fadeIn 0.3s ease-in-out, mine-glow 1s infinite alternate;
+}
+
+.cell.safe.fade-in {
+  animation: fadeInSafe 0.3s ease-in-out;
+}
+
+@keyframes jiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeInSafe {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.game-over {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-top: 25px;
+  text-align: center;
+  text-shadow: 0 0 10px #e74c3c;
+  animation: game-over-glow 1s infinite alternate;
+}
+
+@keyframes game-over-glow {
+  0% {
+    text-shadow: 0 0 5px #e74c3c;
+  }
+  100% {
+    text-shadow: 0 0 15px #e74c3c;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .board {
+    grid-template-columns: repeat(4, 60px);
+  }
+}
+</style>
   </head>
   <body>
     <h1>Mines</h1>
