@@ -305,6 +305,28 @@ h1 {
     grid-template-columns: repeat(4, 60px);
   }
 }
+.all-in-button {
+  background: linear-gradient(145deg, #ff6b6b, #ff4757);
+  color: white;
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 15px #ff6b6b;
+}
+
+.all-in-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #ff6b6b;
+}
+
+.all-in-button:disabled {
+  background: gray;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 </style>
   </head>
   <body>
@@ -327,170 +349,185 @@ h1 {
       };
 
       function MinesGame() {
-  const size = 5;
-  const totalCells = size * size;
-  const [mineCount, setMineCount] = useState(5);
-  const [bet, setBet] = useState(10);
-  const [balance, setBalance] = useState(1000);
-  const [board, setBoard] = useState(generateBoard(size, mineCount));
-  const [revealed, setRevealed] = useState(Array(totalCells).fill(false));
-  const [gameOver, setGameOver] = useState(false);
-  const [cashout, setCashout] = useState(1);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const [inProgress, setInProgress] = useState(false);
+        const size = 5;
+        const totalCells = size * size;
+        const [mineCount, setMineCount] = useState(5);
+        const [bet, setBet] = useState(10);
+        const [balance, setBalance] = useState(1000);
+        const [board, setBoard] = useState(generateBoard(size, mineCount));
+        const [revealed, setRevealed] = useState(Array(totalCells).fill(false));
+        const [gameOver, setGameOver] = useState(false);
+        const [cashout, setCashout] = useState(1);
+        const [gameStarted, setGameStarted] = useState(false);
+        const [clickCount, setClickCount] = useState(0);
+        const [inProgress, setInProgress] = useState(false);
 
-  const handleClick = (index) => {
-    if (!inProgress || gameOver || revealed[index]) return;
-    const newRevealed = [...revealed];
-    newRevealed[index] = true;
-    setRevealed(newRevealed);
+        const handleClick = (index) => {
+          if (!inProgress || gameOver || revealed[index]) return;
+          const newRevealed = [...revealed];
+          newRevealed[index] = true;
+          setRevealed(newRevealed);
 
-    if (board[index] === "mine") {
-      setGameOver(true);
-      setCashout(0);
-      setInProgress(false);
-    } else {
-      setClickCount((prevCount) => {
-        const safeCount = prevCount; // safe picks so far
-        // Calculate factor: remaining cells / remaining safe cells
-        const factor =
-          (totalCells - safeCount) /
-          ((totalCells - mineCount) - safeCount);
-        setCashout((prevCashout) => prevCashout * factor);
-        return safeCount + 1;
-      });
-    }
-  };
+          if (board[index] === "mine") {
+            setGameOver(true);
+            setCashout(0);
+            setInProgress(false);
+          } else {
+            setClickCount((prevCount) => {
+              const safeCount = prevCount; // safe picks so far
+              // Calculate factor: remaining cells / remaining safe cells
+              const factor =
+                (totalCells - safeCount) /
+                ((totalCells - mineCount) - safeCount);
+              setCashout((prevCashout) => prevCashout * factor);
+              return safeCount + 1;
+            });
+          }
+        };
 
-  const handleCashout = () => {
-    if (!inProgress || clickCount === 0) return;
-    const winnings = bet * cashout;
-    setBalance((prev) => prev + winnings);
-    alert(`You cashed out with $${winnings.toFixed(2)}!`);
-    setInProgress(false);
-    resetGame();
-  };
+        const handleCashout = () => {
+          if (!inProgress || clickCount === 0) return;
+          const winnings = bet * cashout;
+          setBalance((prev) => prev + winnings);
+          alert(`You cashed out with $${winnings.toFixed(2)}!`);
+          setInProgress(false);
+          resetGame();
+        };
 
-  const handleStart = () => {
-    if (bet > balance || bet <= 0) {
-      alert("Invalid bet amount");
-      return;
-    }
-    // Deduct bet and start a new game.
-    setBalance((prev) => prev - bet);
-    setGameStarted(true);
-    setInProgress(true);
-    resetGame();
-  };
+        const handleStart = (allIn = false) => {
+          const currentBet = allIn ? balance : bet;
+          if (currentBet > balance || currentBet <= 0) {
+            alert("Invalid bet amount");
+            return;
+          }
+          // Deduct bet and start a new game.
+          setBalance((prev) => prev - currentBet);
+          setBet(currentBet); // Update the bet to the all-in amount
+          setGameStarted(true);
+          setInProgress(true);
+          resetGame();
+        };
 
-  const resetGame = () => {
-    setBoard(generateBoard(size, mineCount));
-    setRevealed(Array(totalCells).fill(false));
-    setGameOver(false);
-    setCashout(1);
-    setClickCount(0);
-  };
+        const handleAllIn = () => {
+          handleStart(true);
+        };
 
-  // Top up the balance to 1000 if below 1000.
-  const handleTopUp = () => {
-    if (balance < 1000 && !inProgress) {
-      setBalance(1000);
-    }
-  };
+        const resetGame = () => {
+          setBoard(generateBoard(size, mineCount));
+          setRevealed(Array(totalCells).fill(false));
+          setGameOver(false);
+          setCashout(1);
+          setClickCount(0);
+        };
 
-  return (
-    <div className="game">
-      <div className="balance">
-        Balance: ${balance.toFixed(2)}
-        {balance < 1000 && (
-          <button
-            className="topup-button"
-            onClick={handleTopUp}
-            disabled={inProgress} // Disable button during the game
-          >
-            Top Up
-          </button>
-        )}
-      </div>
-      <div className="inputs">
-        <div>
-          <label>Bet Amount</label>
-          <input
-            type="number"
-            value={bet}
-            onChange={(e) => setBet(Number(e.target.value))}
-            placeholder="Bet"
-          />
-        </div>
-        <div>
-          <label>Mines Count</label>
-          <input
-            type="number"
-            value={mineCount}
-            onChange={(e) => setMineCount(Number(e.target.value))}
-            placeholder="Mines"
-          />
-        </div>
-      </div>
-      <div className="button-container">
-        <button
-          className="start-button"
-          onClick={handleStart}
-          disabled={inProgress}
-        >
-          Start Game
-        </button>
-        {inProgress && (
-          <button className="cashout-button" onClick={handleCashout}>
-            Cashout
-          </button>
-        )}
-      </div>
-      <div className="cashout-amount">
-        Potential Cashout: ${(bet * cashout).toFixed(2)}
-      </div>
-      {gameOver && (
-        <div className="game-over">Game Over! You hit a mine!</div>
-      )}
-      <div className="board">
-        {board.map((cell, index) => (
-          <div
-            key={index}
-            className={`cell ${
-              revealed[index]
-                ? cell === "mine"
-                  ? "mine fade-in"
-                  : "safe fade-in"
-                : ""
-            }`}
-            onClick={() => handleClick(index)}
-          >
-            {revealed[index] &&
-              (cell === "mine" ? (
-                <span>💣</span>
-              ) : (
-                <span
-                  style={{
-                    fontSize:
-                      (bet * cashout).toFixed(2).length > 5
-                        ? "1rem"
-                        : "1.8rem",
-                    transition: "font-size 0.2s ease-in-out",
-                    wordBreak: "break-word",
-                    textAlign: "center",
-                    lineHeight: "1.2",
-                  }}
+        // Top up the balance to 1000 if below 1000.
+        const handleTopUp = () => {
+          if (balance < 1000 && !inProgress) {
+            setBalance(1000);
+          }
+        };
+
+        return (
+          <div className="game">
+            <div className="balance">
+              Balance: ${balance.toFixed(2)}
+              {balance < 1000 && (
+                <button
+                  className="topup-button"
+                  onClick={handleTopUp}
+                  disabled={inProgress} // Disable button during the game
                 >
-                  ${(bet * cashout).toFixed(2)}
-                </span>
+                  Top Up
+                </button>
+              )}
+            </div>
+            <div className="inputs">
+              <div>
+                <label>Bet Amount</label>
+                <input
+                  type="number"
+                  value={bet}
+                  onChange={(e) => setBet(Number(e.target.value))}
+                  placeholder="Bet"
+                />
+              </div>
+              <div>
+                <label>Mines Count</label>
+                <input
+                  type="number"
+                  value={mineCount}
+                  onChange={(e) => setMineCount(Number(e.target.value))}
+                  placeholder="Mines"
+                />
+              </div>
+            </div>
+            <div className="button-container">
+              <button
+                className="start-button"
+                onClick={() => handleStart(false)}
+                disabled={inProgress}
+              >
+                Start Game
+              </button>
+              {!inProgress && (
+                <button
+                  className="all-in-button"
+                  onClick={handleAllIn}
+                  disabled={inProgress || balance <= 0}
+                >
+                  All In
+                </button>
+              )}
+              {inProgress && (
+                <button className="cashout-button" onClick={handleCashout}>
+                  Cashout
+                </button>
+              )}
+            </div>
+            <div className="cashout-amount">
+              Potential Cashout: ${(bet * cashout).toFixed(2)}
+            </div>
+            {gameOver && (
+              <div className="game-over">Game Over! You hit a mine!</div>
+            )}
+            <div className="board">
+              {board.map((cell, index) => (
+                <div
+                  key={index}
+                  className={`cell ${
+                    revealed[index]
+                      ? cell === "mine"
+                        ? "mine fade-in"
+                        : "safe fade-in"
+                      : ""
+                  }`}
+                  onClick={() => handleClick(index)}
+                >
+                  {revealed[index] &&
+                    (cell === "mine" ? (
+                      <span>💣</span>
+                    ) : (
+                      <span
+                        style={{
+                          fontSize:
+                            (bet * cashout).toFixed(2).length > 5
+                              ? "1rem"
+                              : "1.8rem",
+                          transition: "font-size 0.2s ease-in-out",
+                          wordBreak: "break-word",
+                          textAlign: "center",
+                          lineHeight: "1.2",
+                        }}
+                      >
+                        ${(bet * cashout).toFixed(2)}
+                      </span>
+                    ))}
+                </div>
               ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+        );
+      }
 
       ReactDOM.render(<MinesGame />, document.getElementById("root"));
     </script>
