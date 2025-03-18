@@ -8,8 +8,8 @@ body {
     flex-direction: column;
     margin: 0;
     padding: 20px;
-    min-height: 100vh; /* Use min-height instead of height */
-    overflow: auto; /* Allow scrolling */
+    min-height: 100vh; 
+    overflow: auto; 
   }
   
   h1 {
@@ -39,7 +39,7 @@ body {
     box-sizing: border-box;
     border: 2px solid #00adb5;
     animation: container-glow 3s infinite alternate;
-    margin-bottom: 20px; /* Add margin to allow scrolling */
+    margin-bottom: 20px; 
   }
   
   @keyframes container-glow {
@@ -50,8 +50,7 @@ body {
       box-shadow: 0 0 40px rgba(0, 173, 181, 0.8);
     }
   }
-  
-  /* Balance and Top Up */
+
   .balance {
     font-size: 1.5rem;
     font-weight: bold;
@@ -62,6 +61,7 @@ body {
     align-items: center;
     gap: 10px;
     text-shadow: 0 0 10px #4fffb0;
+    font-size: 27.5px;
   }
   
   .topup-button {
@@ -81,7 +81,6 @@ body {
     box-shadow: 0 0 25px #ffd700;
   }
   
-  /* Cashout Amount */
   .cashout-amount {
     font-size: 1.5rem;
     font-weight: bold;
@@ -101,7 +100,6 @@ body {
     }
   }
   
-  /* Inputs */
   .inputs {
     display: flex;
     flex-direction: column;
@@ -135,7 +133,6 @@ body {
     outline: none;
   }
   
-  /* Button Container */
   .button-container {
     display: flex;
     justify-content: center;
@@ -143,8 +140,7 @@ body {
     gap: 15px;
     margin-top: 20px;
   }
-  
-  /* Start Button */
+
   .start-button {
     background: linear-gradient(145deg, #00adb5, #0097a7);
     color: white;
@@ -169,7 +165,6 @@ body {
     box-shadow: none;
   }
   
-  /* Cashout Button */
   .cashout-button {
     background: linear-gradient(145deg, #90ee90, #76d376);
     color: #222831;
@@ -186,8 +181,7 @@ body {
     transform: scale(1.1);
     box-shadow: 0 0 25px #90ee90;
   }
-  
-  /* Board and Cells */
+
   .board {
     display: grid;
     grid-template-columns: repeat(5, 60px);
