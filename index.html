@@ -44,11 +44,15 @@
 
         const handleClick = (index) => {
           if (!inProgress || gameOver || revealed[index]) return;
+
           const newRevealed = [...revealed];
           newRevealed[index] = true;
           setRevealed(newRevealed);
 
           if (board[index] === "mine") {
+            // Reveal all mines when the game is over
+            const updatedRevealed = board.map((cell, i) => cell === "mine" || revealed[i]);
+            setRevealed(updatedRevealed);
             setGameOver(true);
             setCashout(0);
             setInProgress(false);
@@ -175,7 +179,7 @@
                 <div
                   key={index}
                   className={`cell ${
-                    revealed[index]
+                    revealed[index] || (gameOver && cell === "mine")
                       ? cell === "mine"
                         ? "mine fade-in"
                         : "safe fade-in"
@@ -183,7 +187,7 @@
                   }`}
                   onClick={() => handleClick(index)}
                 >
-                  {revealed[index] &&
+                  {(revealed[index] || (gameOver && cell === "mine")) &&
                     (cell === "mine" ? (
                       <span>💣</span>
                     ) : (

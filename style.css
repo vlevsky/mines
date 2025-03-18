@@ -317,3 +317,17 @@ body {
     cursor: not-allowed;
     box-shadow: none;
   }
+
+  .mine {
+    background-color: red;
+  }
+  .safe {
+    background-color: green;
+  }
+  .fade-in {
+    animation: fadeIn 0.5s;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
