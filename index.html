@@ -41,6 +41,7 @@
         const [gameStarted, setGameStarted] = useState(false);
         const [clickCount, setClickCount] = useState(0);
         const [inProgress, setInProgress] = useState(false);
+        const [cashedOut, setCashedOut] = useState(false); // New state to track cashout
 
         const handleClick = (index) => {
           if (!inProgress || gameOver || revealed[index]) return;
@@ -75,7 +76,10 @@
           setBalance((prev) => prev + winnings);
           alert(`You cashed out with $${winnings.toFixed(2)}!`);
           setInProgress(false);
-          resetGame();
+          setCashedOut(true); // Set cashedOut to true
+          // Reveal all mines on cashout
+          const updatedRevealed = board.map((cell, i) => cell === "mine" || revealed[i]);
+          setRevealed(updatedRevealed);
         };
 
         const handleStart = (allIn = false) => {
@@ -89,6 +93,7 @@
           setBet(currentBet); // Update the bet to the all-in amount
           setGameStarted(true);
           setInProgress(true);
+          setCashedOut(false); // Reset cashedOut state
           resetGame();
         };
 
@@ -179,7 +184,7 @@
                 <div
                   key={index}
                   className={`cell ${
-                    revealed[index] || (gameOver && cell === "mine")
+                    revealed[index] || (gameOver && cell === "mine") || (cashedOut && cell === "mine")
                       ? cell === "mine"
                         ? "mine fade-in"
                         : "safe fade-in"
@@ -187,7 +192,7 @@
                   }`}
                   onClick={() => handleClick(index)}
                 >
-                  {(revealed[index] || (gameOver && cell === "mine")) &&
+                  {(revealed[index] || (gameOver && cell === "mine") || (cashedOut && cell === "mine")) &&
                     (cell === "mine" ? (
                       <span>💣</span>
                     ) : (
