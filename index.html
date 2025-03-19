@@ -41,7 +41,7 @@
         const [gameStarted, setGameStarted] = useState(false);
         const [clickCount, setClickCount] = useState(0);
         const [inProgress, setInProgress] = useState(false);
-        const [cashedOut, setCashedOut] = useState(false); // New state to track cashout
+        const [cashedOut, setCashedOut] = useState(false);
 
         const handleClick = (index) => {
           if (!inProgress || gameOver || revealed[index]) return;
@@ -72,11 +72,11 @@
 
         const handleCashout = () => {
           if (!inProgress || clickCount === 0) return;
-          const winnings = bet * cashout;
-          setBalance((prev) => prev + winnings);
+          const winnings = parseFloat((bet * cashout).toFixed(2)); // Round to nearest penny
+          setBalance((prev) => parseFloat((prev + winnings).toFixed(2))); // Round balance to nearest penny
           alert(`You cashed out with $${winnings.toFixed(2)}!`);
           setInProgress(false);
-          setCashedOut(true); // Set cashedOut to true
+          setCashedOut(true);
           // Reveal all mines on cashout
           const updatedRevealed = board.map((cell, i) => cell === "mine" || revealed[i]);
           setRevealed(updatedRevealed);
@@ -89,7 +89,7 @@
             return;
           }
           // Deduct bet and start a new game.
-          setBalance((prev) => prev - currentBet);
+          setBalance((prev) => parseFloat((prev - currentBet).toFixed(2))); // Round balance to nearest penny
           setBet(currentBet); // Update the bet to the all-in amount
           setGameStarted(true);
           setInProgress(true);
